@@ -43,10 +43,10 @@ kubectl apply -f .
 
 karmada clusterimportpolicy 放在 *./clusterimportpolicy* 下
 ```bash
-kubectl apply ./clusterimportpolicy
+kubectl apply -f ./clusterimportpolicy
 ```
 
-clusterpedia 组件部署完成后，可以直接 `kubectl get pediacluster` 查看已经被 karmada 纳管的集群
+**clusterpedia 组件部署完成后**，可以直接 `kubectl get pediacluster` 查看已经被 karmada 纳管的集群
 ```bash
 $ kubectl get pediacluster
 $ kubectl get pediaclusterlifecycle
