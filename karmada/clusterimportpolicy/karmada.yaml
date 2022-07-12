@@ -23,6 +23,10 @@ spec:
         - group: ""
           resources:
             - "pods"
+            - "services"
+        - group: "apps"
+          resources:
+            - "*"
       syncResourcesRefName: ""
   creationCondition: |
     {{ if ne .source.spec.apiEndpoint "" }}
