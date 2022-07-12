@@ -37,7 +37,7 @@ spec:
           mountPath: /etc/clusterpedia/storage
           readOnly: true
         - name: kubeconfig
-          mountPath: /etc/clusterpedia/kubeconfig
+          mountPath: /etc/kubeconfig
           subPath: kubeconfig
           readOnly: true
       volumes:

@@ -24,7 +24,7 @@ spec:
         - --leader-elect-resource-namespace=karmada-system
         volumeMounts:
         - name: kubeconfig
-          mountPath: /etc/clusterpedia/kubeconfig
+          mountPath: /etc/kubeconfig
           subPath: kubeconfig
           readOnly: true
       volumes:
