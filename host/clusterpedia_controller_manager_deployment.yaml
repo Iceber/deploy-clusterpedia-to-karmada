@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clusterpedia-controller-manager
+  namespace: karmada-system
+  labels:
+    app: clusterpedia-controller-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clusterpedia-controller-manager
+  template:
+    metadata:
+      labels:
+        app: clusterpedia-controller-manager
+    spec:
+      containers:
+      - name: manager
+        image: ghcr.io/clusterpedia-io/clusterpedia/controller-manager:latest
+        command:
+        - /usr/local/bin/controller-manager
+        - --kubeconfig=/etc/kubeconfig
+        - --leader-elect-resource-namespace=karmada-system
+        volumeMounts:
+        - name: kubeconfig
+          mountPath: /etc/clusterpedia/kubeconfig
+          subPath: kubeconfig
+          readOnly: true
+      volumes:
+      - name: kubeconfig
+        secret:
+          defaultMode: 420
+          secretName: kubeconfig

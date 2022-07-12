@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clusterpedia-clustersynchro-manager
+  namespace: karmada-system
+  labels:
+    app: clusterpedia-clustersynchro-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clusterpedia-clustersynchro-manager
+  template:
+    metadata:
+      labels:
+        app: clusterpedia-clustersynchro-manager
+    spec:
+      containers:
+      - name: manager
+        image: ghcr.io/clusterpedia-io/clusterpedia/clustersynchro-manager:latest
+        command:
+        - /usr/local/bin/clustersynchro-manager
+        - --leader-elect-resource-namespace=karmada-system
+        - --kubeconfig=/etc/kubeconfig
+        - --storage-config=/etc/clusterpedia/storage/internalstorage-config.yaml
+        - --feature-gates=PruneManagedFields=true,PruneLastAppliedConfiguration=true
+        env:
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: internalstorage-password
+              key: password
+        volumeMounts:
+        - name: internalstorage-config
+          mountPath: /etc/clusterpedia/storage
+          readOnly: true
+        - name: kubeconfig
+          mountPath: /etc/clusterpedia/kubeconfig
+          subPath: kubeconfig
+          readOnly: true
+      volumes:
+      - name: internalstorage-config
+        configMap:
+          name: clusterpedia-internalstorage
+      - name: kubeconfig
+        secret:
+          defaultMode: 420
+          secretName: kubeconfig

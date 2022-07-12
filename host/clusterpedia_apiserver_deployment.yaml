@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clusterpedia-apiserver
+  namespace: karmada-system
+  labels:
+    app: clusterpedia-apiserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clusterpedia-apiserver
+  template:
+    metadata:
+      labels:
+        app: clusterpedia-apiserver
+    spec:
+      containers:
+      - name: apiserver
+        image: ghcr.io/clusterpedia-io/clusterpedia/apiserver:latest
+        command:
+        - /usr/local/bin/apiserver
+        - --secure-port=443
+        - --kubeconfig=/etc/kubeconfig
+        - --authentication-kubeconfig=/etc/kubeconfig
+        - --authorization-kubeconfig=/etc/kubeconfig
+        - --storage-config=/etc/clusterpedia/storage/internalstorage-config.yaml
+        - -v=3
+        env:
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: internalstorage-password
+              key: password
+        volumeMounts:
+        - name: internalstorage-config
+          mountPath: /etc/clusterpedia/storage
+          readOnly: true
+        - name: kubeconfig
+          mountPath: /etc/clusterpedia/kubeconfig
+          subPath: kubeconfig
+          readOnly: true
+      volumes:
+      - name: internalstorage-config
+        configMap:
+          name: clusterpedia-internalstorage
+      - name: kubeconfig
+        secret:
+          defaultMode: 420
+          secretName: kubeconfig
